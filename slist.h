@@ -31,17 +31,23 @@
  *
  *	@(#)queue.h	8.5 (Berkeley) 8/20/94
  */
+/**
+ * File   : slist.h
+ * License: MIT/X11
+ * Author : Dries Pauwels <2mjolk@gmail.com>
+ * Date   : di 11 sep 2018 07:55
+ */
 
 #ifndef SLLIST
 #define SLLIST
 
 #define SLL_HEAD(name, type)		\
-struct name {	struct type *slh_first; }		
+    struct name {	struct type *slh_first; }		
 
 #define	SLL_HEAD_INITIALIZER(head) { 0 }
 
 #define SLL_ENTRY(type)		\
-struct { struct type *sle_next; }
+    struct { struct type *sle_next; }
 
 /*
  * Singly-linked List access methods.
@@ -52,46 +58,46 @@ struct { struct type *sle_next; }
 #define	SLL_NEXT(elm, field)	((elm)->field.sle_next)
 
 #define	SLL_FOREACH(var, head, field)					\
-	for((var) = SLL_FIRST(head);					\
-	    (var) != SLL_END(head);					\
-	    (var) = SLL_NEXT(var, field))
+    for((var) = SLL_FIRST(head);					\
+            (var) != SLL_END(head);					\
+            (var) = SLL_NEXT(var, field))
 
 #define	SLL_FOREACH_SAFE(var, head, field, tvar)			\
-	for ((var) = SLL_FIRST(head);				\
-	    (var) && ((tvar) = SLL_NEXT(var, field), 1);		\
-	    (var) = (tvar))
+    for ((var) = SLL_FIRST(head);				\
+            (var) && ((tvar) = SLL_NEXT(var, field), 1);		\
+            (var) = (tvar))
 
 #define SLL_INIT(head) do { SLL_FIRST(head) = 0; } while (0)
 
 #define	SLL_INSERT_AFTER(slistelm, elm, field) do {			\
-	(elm)->field.sle_next = (slistelm)->field.sle_next;		\
-	(slistelm)->field.sle_next = (elm);				\
+    (elm)->field.sle_next = (slistelm)->field.sle_next;		\
+    (slistelm)->field.sle_next = (elm);				\
 } while (0)
 
 #define	SLL_INSERT_HEAD(head, elm, field) do {			\
-	(elm)->field.sle_next = (head)->slh_first;			\
-	(head)->slh_first = (elm);					\
+    (elm)->field.sle_next = (head)->slh_first;			\
+    (head)->slh_first = (elm);					\
 } while (0)
 
 #define	SLL_REMOVE_AFTER(elm, field) do {				\
-	(elm)->field.sle_next = (elm)->field.sle_next->field.sle_next;	\
+    (elm)->field.sle_next = (elm)->field.sle_next->field.sle_next;	\
 } while (0)
 
 #define	SLL_REMOVE_HEAD(head, field) do {				\
-	(head)->slh_first = (head)->slh_first->field.sle_next;		\
+    (head)->slh_first = (head)->slh_first->field.sle_next;		\
 } while (0)
 
 #define SLL_REMOVE(head, elm, type, field) do {			\
-	if ((head)->slh_first == (elm)) {				\
-		SLL_REMOVE_HEAD((head), field);			\
-	} else {							\
-		struct type *curelm = (head)->slh_first;		\
-									\
-		while (curelm->field.sle_next != (elm))			\
-			curelm = curelm->field.sle_next;		\
-		curelm->field.sle_next =				\
-		    curelm->field.sle_next->field.sle_next;		\
-	}								\
+    if ((head)->slh_first == (elm)) {				\
+        SLL_REMOVE_HEAD((head), field);			\
+    } else {							\
+        struct type *curelm = (head)->slh_first;		\
+        \
+        while (curelm->field.sle_next != (elm))			\
+        curelm = curelm->field.sle_next;		\
+        curelm->field.sle_next =				\
+        curelm->field.sle_next->field.sle_next;		\
+    }								\
 } while (0)
 
 #endif
