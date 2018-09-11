@@ -32,12 +32,11 @@ LLRB_PROTOTYPE(range_tree, node, entry, intcmp);
 LLRB_GENERATE(range_tree, node, entry, intcmp)
 LLRB_RANGE_GROUP_GEN(range_tree, node, entry, range_group, next)	
 
-	int testdata[5][2] = { 
-		{20, 40}, {16, 18}, {5, 17}, {13, 99}, {3, 8} 
-	}; 
+int testdata[5][2] = { 
+	{20, 40}, {16, 18}, {5, 17}, {13, 99}, {3, 8} 
+}; 
 
-	void 
-print_tree(struct node *n) 
+void print_tree(struct node *n) 
 { 
 	struct node *left, *right; 
 
