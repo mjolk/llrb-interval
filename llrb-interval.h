@@ -10,12 +10,12 @@
 #define LLRB_RANGE_END(elm) (elm)->end
 #define LLRB_RANGE_START(elm) (elm)->start
 #define LLRB_PARENT_MAX(elm, field) \
-    int left_max = 0; \
-    int right_max = 0; \
+    uint64_t left_max = 0; \
+    uint64_t right_max = 0; \
     if(LLRB_LEFT(elm, field)){ left_max = (LLRB_RANGE_END(LLRB_LEFT(elm, field)) < LLRB_RANGE_MAX(LLRB_LEFT(elm, field))?LLRB_RANGE_MAX(LLRB_LEFT(elm, field)):LLRB_RANGE_END(LLRB_LEFT(elm, field)));} \
     if(LLRB_RIGHT(elm, field)){ right_max = (LLRB_RANGE_END(LLRB_RIGHT(elm, field)) < LLRB_RANGE_MAX(LLRB_RIGHT(elm, field))?LLRB_RANGE_MAX(LLRB_RIGHT(elm, field)):LLRB_RANGE_END(LLRB_RIGHT(elm, field)));} \
-    int maxc = (left_max >= right_max)?left_max:right_max; \
-    int max = (maxc > LLRB_RANGE_END(elm))?maxc:LLRB_RANGE_END(elm); \
+    uint64_t maxc = (left_max >= right_max)?left_max:right_max; \
+    uint64_t max = (maxc > LLRB_RANGE_END(elm))?maxc:LLRB_RANGE_END(elm); \
     LLRB_RANGE_MAX(elm) = (LLRB_RANGE_MAX(elm) <  max)?max:LLRB_RANGE_MAX(elm);
 #define LLRB_AUGMENT(elm, field, type) \
     struct type *p = 0; \
