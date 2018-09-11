@@ -21,12 +21,9 @@
 	}
 #define LLRB_RANGE_GROUP_GEN(name, type, field, sll_type, sll_field) \
 typedef void (*merger)(struct type*, struct sll_type*); \
-void name##_LLRB_RANGE_MERGE(struct type *to_merge, struct sll_type *sll, merger merge) { \
-	merge(to_merge, sll); \
-} \
 void name##_LLRB_RANGE_MATCHER(struct type *s, struct type *elm, struct sll_type *sll, merger merge) { \
 	if(LLRB_RANGE_START(elm) < LLRB_RANGE_END(s) && LLRB_RANGE_END(elm) > LLRB_RANGE_START(s)) { \
-		name##_LLRB_RANGE_MERGE(s, sll, merge); \
+		merge(s, sll); \
 	} \
 	if(LLRB_LEFT(s, field)){ \
 		if(LLRB_RANGE_START(elm) < LLRB_RANGE_MAX(LLRB_LEFT(s, field))) { \
