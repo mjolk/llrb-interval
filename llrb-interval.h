@@ -52,7 +52,6 @@ int name##_LLRB_RANGE_GROUP_ADD(struct name *head, struct type *elm, struct sll_
 	} \
 	name##_LLRB_RANGE_MATCHER(LLRB_ROOT(head), elm, sll, merge); \
 	if((!(sll)->slh_first->sll_field.sle_next) && ((sll)->slh_first->start <= elm->start) && ((sll)->slh_first->end >= elm->end)) { \
-		printf("range start:%d end:%d not added\n" , elm->start, elm->end); \
 		return 0; \
 	} \
 	name##_LLRB_INSERT(head, elm); \
