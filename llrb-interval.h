@@ -43,8 +43,8 @@
         } \
     } \
     int name##_LLRB_RANGE_OVERLAPS(struct name *head, struct type *elm) { \
-        int end = LLRB_RANGE_MAX(LLRB_ROOT(head)); \
-        int start = LLRB_RANGE_START(LLRB_MIN(name, head)); \
+        uint64_t end = LLRB_RANGE_MAX(LLRB_ROOT(head)); \
+        uint64_t start = LLRB_RANGE_START(LLRB_MIN(name, head)); \
         if(LLRB_RANGE_START(elm) < end && LLRB_RANGE_END(elm) > start) { \
             return 1; \
         } \
