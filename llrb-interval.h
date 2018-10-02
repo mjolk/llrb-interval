@@ -71,6 +71,7 @@
             name##_LLRB_INSERT(head, nr); \
             return 1; \
         } \
+        SLL_INIT(sll); \
         name##_LLRB_RANGE_MATCHER(LLRB_ROOT(head), elm, sll, merge); \
         if(!SLL_NEXT(SLL_FIRST(sll), next) && (LLRB_RANGE_START(SLL_FIRST(sll)) <= LLRB_RANGE_START(elm) && (LLRB_RANGE_END(SLL_FIRST(sll)) >= LLRB_RANGE_END(elm)))) { \
             return 0; \

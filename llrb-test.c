@@ -14,7 +14,7 @@
 #include <stdint.h>
 
 
-SLL_HEAD(range_group, range) lhead;
+SLL_HEAD(range_group, node) lhead;
 struct range_group *merge_list;
 struct nptr {
     struct node* sle_next;
@@ -71,15 +71,15 @@ void print_tree(struct node *n)
     } 
 }
 
-void merge(struct node *node_to_merge, struct range_group *sll) {
-    struct range *to_merge = malloc(sizeof(struct range));
+void merge(struct node *to_merge, struct range_group *sll) {
+    /*struct range *to_merge = malloc(sizeof(struct range));
     if(to_merge == 0) return;
     to_merge->node = node_to_merge;
     to_merge->start_key = node_to_merge->start_key;
-    to_merge->end_key = node_to_merge->end_key;
+    to_merge->end_key = node_to_merge->end_key;*/
     printf("<<<<<<<<<<<< MERGE >>>>>>>>>\n");
     printf("address: %p start: %lu end: %lu\n", to_merge, to_merge->start_key, to_merge->end_key);
-    struct range *c, *prev, *nxt;
+    struct node *c, *prev, *nxt;
     nxt = SLL_FIRST(sll);
     SLL_INSERT_HEAD(sll, to_merge, next);
     if(nxt == 0) return;
@@ -88,26 +88,22 @@ void merge(struct node *node_to_merge, struct range_group *sll) {
         printf("CURRENT: %lu addr: %p\n", nxt->start_key, nxt);
         c = nxt;
         nxt = SLL_NEXT(nxt, next);
-        int delete = 1;
-        if(to_merge->start_key == c->start_key && to_merge->end_key == c->end_key) {
-            printf("DUPLICATE????");
-            delete = 0;
-        }
         printf("merging %lu/%lu with %lu/%lu\n", to_merge->start_key, to_merge->end_key, c->start_key, c->end_key);
         if(to_merge->start_key <= c->end_key && to_merge->end_key >= c->start_key) {
             /**overlap**/
             printf("start: %lu end: %lu OVERLAPS start: %lu end: %lu\n", to_merge->start_key, to_merge->end_key, c->start_key, c->end_key);
             if(to_merge->start_key > c->start_key){
-                to_merge->node->start_key = to_merge->start_key = c->start_key;
+                to_merge->start_key = to_merge->start_key = c->start_key;
             }
             if(to_merge->end_key < c->end_key) {
-                to_merge->node->end_key = to_merge->end_key = c->end_key;
+                to_merge->end_key = to_merge->end_key = c->end_key;
             }
             printf("<<remove>>\n");
             SLL_REMOVE_AFTER(prev, next);
             //printf("removed from filter list ::%p\n", c);
-            if(delete) LLRB_DELETE(range_tree, &head, c->node);
-            printf("<<removed from tree>> %p\n", c->node);
+            LLRB_DELETE(range_tree, &head, c);
+            printf("<<removed from tree>> %p\n", c);
+            free(c);
         } else {
             prev = c;
         }
