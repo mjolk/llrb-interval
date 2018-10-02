@@ -1,3 +1,9 @@
+/**
+ * File   : /home/mjolk/clocal/llrb-interval/llrb.h
+ * License: MIT/X11
+ * Author : Dries Pauwels <2mjolk@gmail.com>
+ * Date   : za 15 sep 2018 00:00
+ */
 /* ==========================================================================
  * llrb.h - Iterative Left-leaning Red-Black Tree.
  * --------------------------------------------------------------------------
@@ -313,6 +319,7 @@
 #define LLRB_MIN(name, head) name##_LLRB_MIN(LLRB_ROOT((head)))
 #define LLRB_MAX(name, head) name##_LLRB_MAX(LLRB_ROOT((head)))
 #define LLRB_NEXT(name, head, elm) name##_LLRB_NEXT((elm))
+#define LLRB_PREV(name, head, elm) name##_LLRB_PREV((elm))
 
 #define LLRB_FOREACH(elm, name, head) \
     for ((elm) = LLRB_MIN(name, head); (elm); (elm) = name##_LLRB_NEXT((elm)))
