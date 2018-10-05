@@ -1,5 +1,5 @@
 /**
- * File   : /home/mjolk/clocal/llrb-interval/llrb.h
+ * File   : llrb.h
  * License: MIT/X11
  * Author : Dries Pauwels <2mjolk@gmail.com>
  * Date   : za 15 sep 2018 00:00
