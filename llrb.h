@@ -77,9 +77,8 @@
 #endif
 #endif
 
-#ifndef LLRB_INTERVAL
+#ifndef LLRB_AUGMENT
 #define LLRB_AUGMENT(elm, field, type)
-#define LLRB_RANGE(name, type, field, head)
 #endif
 
 #define LLRB_HEAD(name, type) \
@@ -114,7 +113,8 @@
     attr struct type *name##_LLRB_FIND(struct name *, struct type *); \
     attr struct type *name##_LLRB_MIN(struct type *); \
     attr struct type *name##_LLRB_MAX(struct type *); \
-    attr struct type *name##_LLRB_NEXT(struct type *);
+    attr struct type *name##_LLRB_NEXT(struct type *);\
+    attr struct type *name##_LLRB_PREV(struct type *);
 
 #define LLRB_GENERATE(name, type, field, cmp) \
     LLRB_GENERATE_INTERNAL(name, type, field, cmp,)

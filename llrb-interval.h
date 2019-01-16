@@ -9,19 +9,23 @@
 #endif
 #ifndef LLRB_INTERVAL
 #define LLRB_INTERVAL
+#define LLRB_RANGE(name, type, field, head)
 #define LLRB_RANGE_MAX(elm) (elm)->max
 #define LLRB_RANGE_END(elm) (elm)->end_key
 #define LLRB_RANGE_START(elm) (elm)->start_key
 #define LLRB_PARENT_MAX(elm, field) \
-    char left_max[KEY_SIZE+1] = "0000"; \
-    char right_max[KEY_SIZE+1] = "0000"; \
+    char left_max[KEY_SIZE+1]; \
+    char right_max[KEY_SIZE+1]; \
     if(LLRB_LEFT(elm, field)){ strncpy(left_max, (strncmp(LLRB_RANGE_END(LLRB_LEFT(elm, field)), LLRB_RANGE_MAX(LLRB_LEFT(elm, field)), KEY_SIZE)>0?LLRB_RANGE_END(LLRB_LEFT(elm, field)):LLRB_RANGE_MAX(LLRB_LEFT(elm, field))), 4);} \
     if(LLRB_RIGHT(elm, field)){ strncpy(right_max, (strncmp(LLRB_RANGE_END(LLRB_RIGHT(elm, field)), LLRB_RANGE_MAX(LLRB_RIGHT(elm, field)), KEY_SIZE)>0?LLRB_RANGE_END(LLRB_RIGHT(elm, field)):LLRB_RANGE_MAX(LLRB_RIGHT(elm, field))), 4);} \
     char maxc[KEY_SIZE+1]; \
     char max[KEY_SIZE+1]; \
     strncpy(maxc, (strncmp(left_max, right_max, KEY_SIZE) > 0?left_max:right_max), KEY_SIZE+1); \
     strncpy(max,  (strncmp(maxc , LLRB_RANGE_END(elm), KEY_SIZE) > 0?maxc:LLRB_RANGE_END(elm)), KEY_SIZE+1); \
-    strncpy(LLRB_RANGE_MAX(elm), (strncmp(LLRB_RANGE_MAX(elm),  max, KEY_SIZE)>0?LLRB_RANGE_MAX(elm):max), KEY_SIZE+1); 
+    strncpy(LLRB_RANGE_MAX(elm), (strncmp(LLRB_RANGE_MAX(elm),  max, KEY_SIZE)>0?LLRB_RANGE_MAX(elm):max), KEY_SIZE+1);
+#ifdef LLRB_AUGMENT
+#undef LLRB_AUGMENT
+#endif
 #define LLRB_AUGMENT(elm, field, type) \
     struct type *p = 0; \
     p = elm; \
