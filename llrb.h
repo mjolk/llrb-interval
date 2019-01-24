@@ -311,7 +311,7 @@
             elm = LLRB_PARENT(elm, field); \
             return LLRB_PARENT(elm, field); \
         } else return 0; \
-    } 
+    }
 #define LLRB_INSERT(name, head, elm) name##_LLRB_INSERT((head), (elm))
 #define LLRB_DELETE(name, head, elm) name##_LLRB_DELETE((head), (elm))
 #define LLRB_REMOVE(name, head, elm) name##_LLRB_DELETE((head), (elm))

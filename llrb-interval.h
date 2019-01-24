@@ -14,15 +14,15 @@
 #define LLRB_RANGE_END(elm) (elm)->end_key
 #define LLRB_RANGE_START(elm) (elm)->start_key
 #define LLRB_PARENT_MAX(elm, field) \
-    char left_max[KEY_SIZE+1]; \
-    char right_max[KEY_SIZE+1]; \
+    char left_max[KEY_SIZE+1] = ""; \
+    char right_max[KEY_SIZE+1] = ""; \
     if(LLRB_LEFT(elm, field)){ strncpy(left_max, (strncmp(LLRB_RANGE_END(LLRB_LEFT(elm, field)), LLRB_RANGE_MAX(LLRB_LEFT(elm, field)), KEY_SIZE)>0?LLRB_RANGE_END(LLRB_LEFT(elm, field)):LLRB_RANGE_MAX(LLRB_LEFT(elm, field))), 4);} \
     if(LLRB_RIGHT(elm, field)){ strncpy(right_max, (strncmp(LLRB_RANGE_END(LLRB_RIGHT(elm, field)), LLRB_RANGE_MAX(LLRB_RIGHT(elm, field)), KEY_SIZE)>0?LLRB_RANGE_END(LLRB_RIGHT(elm, field)):LLRB_RANGE_MAX(LLRB_RIGHT(elm, field))), 4);} \
-    char maxc[KEY_SIZE+1]; \
-    char max[KEY_SIZE+1]; \
+    char maxc[KEY_SIZE+1] = ""; \
+    char max[KEY_SIZE+1] = ""; \
     strncpy(maxc, (strncmp(left_max, right_max, KEY_SIZE) > 0?left_max:right_max), KEY_SIZE+1); \
     strncpy(max,  (strncmp(maxc , LLRB_RANGE_END(elm), KEY_SIZE) > 0?maxc:LLRB_RANGE_END(elm)), KEY_SIZE+1); \
-    strncpy(LLRB_RANGE_MAX(elm), (strncmp(LLRB_RANGE_MAX(elm),  max, KEY_SIZE)>0?LLRB_RANGE_MAX(elm):max), KEY_SIZE+1);
+    if(strncmp(LLRB_RANGE_MAX(elm),  max, KEY_SIZE)<0) strncpy(LLRB_RANGE_MAX(elm), max, KEY_SIZE+1);
 #ifdef LLRB_AUGMENT
 #undef LLRB_AUGMENT
 #endif
@@ -33,13 +33,10 @@
         /**strncpy(LLRB_RANGE_MAX(p), "0000", 5);**/ \
         LLRB_PARENT_MAX(p, field) \
         p = LLRB_PARENT(p, field); \
-    } 
+    }
 #define LLRB_RANGE_GROUP_GEN(name, type, field, sll_type, sll_field) \
     typedef void (*merger)(struct type*, struct sll_type*); \
     void name##_LLRB_RANGE_MATCHER(struct type *s, struct type *elm, struct sll_type *sll, merger merge) { \
-        if((strncmp(LLRB_RANGE_START(elm), LLRB_RANGE_END(s), KEY_SIZE) <= 0) && (strncmp(LLRB_RANGE_END(elm), LLRB_RANGE_START(s), KEY_SIZE) >= 0)) { \
-            merge(s, sll); \
-        } \
         if(LLRB_LEFT(s, field)){ \
             if(strncmp(LLRB_RANGE_START(elm), LLRB_RANGE_MAX(LLRB_LEFT(s, field)), KEY_SIZE) <= 0) { \
                 name##_LLRB_RANGE_MATCHER(LLRB_LEFT(s, field), elm, sll, merge); \
@@ -49,6 +46,9 @@
             if((strncmp(LLRB_RANGE_START(elm), LLRB_RANGE_MAX(LLRB_RIGHT(s, field)), KEY_SIZE) <= 0) && (strncmp(LLRB_RANGE_END(elm), LLRB_RANGE_START(LLRB_RIGHT(s, field)), 4) >= 0)) { \
                 name##_LLRB_RANGE_MATCHER(LLRB_RIGHT(s, field), elm, sll, merge); \
             } \
+        } \
+        if((strncmp(LLRB_RANGE_START(elm), LLRB_RANGE_END(s), KEY_SIZE) <= 0) && (strncmp(LLRB_RANGE_END(elm), LLRB_RANGE_START(s), KEY_SIZE) >= 0)) { \
+            merge(s, sll); \
         } \
     } \
     int name##_LLRB_RANGE_OVERLAPS(struct name *head, struct type *elm) { \
@@ -61,10 +61,6 @@
     int name##_LLRB_RANGE_GROUP_ADD(struct name *head, struct type *elm, struct sll_type *sll, merger merge) { \
         int no = name##_LLRB_RANGE_OVERLAPS(head, elm); \
         if(no < 1){ \
-            struct type *nr = malloc(sizeof(struct type)); \
-            if(nr == 0) return 0; \
-            *nr = *elm; \
-            name##_LLRB_INSERT(head, nr); \
             return 1; \
         } \
         SLL_INIT(sll); \
@@ -72,10 +68,6 @@
         if(!SLL_NEXT(SLL_FIRST(sll), next) && ((strncmp(LLRB_RANGE_START(SLL_FIRST(sll)), LLRB_RANGE_START(elm), KEY_SIZE) <= 0) && (strncmp(LLRB_RANGE_END(SLL_FIRST(sll)), LLRB_RANGE_END(elm), KEY_SIZE) >= 0))) { \
             return 0; \
         } \
-        struct type *nr = malloc(sizeof(struct type)); \
-        if(nr == 0) return 0; \
-        *nr = *elm; \
-        name##_LLRB_INSERT(head, nr); \
         return 1; \
     }
 
