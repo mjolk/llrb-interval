@@ -168,19 +168,19 @@ int main(void)
     LLRB_INIT(&head);
     SLL_INIT(merge_list);
 
-    add_to_range("0012", "0046");
-    add_to_range("0001", "0002");
-    add_to_range("0006", "0100");
-    add_to_range("0022", "0078");
-    add_to_range("0222", "0788");
-    add_to_range("0300", "0800");
-    add_to_range("0222", "0788");
-    add_to_range("0002", "0005");
-    add_to_range("0050", "0069");
-    add_to_range("0030", "0089");
+    assert(add_to_range("0012", "0046") > 0);
+    assert(add_to_range("0001", "0002") > 0);
+    assert(add_to_range("0006", "0100") > 0);
+    assert(add_to_range("0022", "0078") == 0);
+    assert(add_to_range("0222", "0788") > 0);
+    assert(add_to_range("0300", "0800") > 0);
+    assert(add_to_range("0223", "0787") == 0);
+    assert(add_to_range("0002", "0005") > 0);
+    assert(add_to_range("0050", "0069") == 0);
+    assert(add_to_range("0030", "0089") == 0);
     //add_to_range(last);
     //
-    add_to_range("0001", "0004");
+    assert(add_to_range("0001", "0004") == 0);
 
     print_tree(LLRB_ROOT(&head));
 
