@@ -4,9 +4,6 @@
  * Author : Dries Pauwels <2mjolk@gmail.com>
  * Date   : di 11 sep 2018 07:55
  */
-#ifndef KEY_SIZE
-#define KEY_SIZE 4
-#endif
 #ifndef LLRB_INTERVAL
 #define LLRB_INTERVAL
 #define LLRB_RANGE(name, type, field, head)
@@ -20,9 +17,9 @@
     if(LLRB_RIGHT(elm, field)){ strncpy(right_max, (strncmp(LLRB_RANGE_END(LLRB_RIGHT(elm, field)), LLRB_RANGE_MAX(LLRB_RIGHT(elm, field)), KEY_SIZE)>0?LLRB_RANGE_END(LLRB_RIGHT(elm, field)):LLRB_RANGE_MAX(LLRB_RIGHT(elm, field))), 4);} \
     char maxc[KEY_SIZE+1] = ""; \
     char max[KEY_SIZE+1] = ""; \
-    strncpy(maxc, (strncmp(left_max, right_max, KEY_SIZE) > 0?left_max:right_max), KEY_SIZE+1); \
-    strncpy(max,  (strncmp(maxc , LLRB_RANGE_END(elm), KEY_SIZE) > 0?maxc:LLRB_RANGE_END(elm)), KEY_SIZE+1); \
-    if(strncmp(LLRB_RANGE_MAX(elm),  max, KEY_SIZE)<0) strncpy(LLRB_RANGE_MAX(elm), max, KEY_SIZE+1);
+    strncpy(maxc, (strncmp(left_max, right_max, KEY_SIZE) > 0?left_max:right_max), KEY_SIZE); \
+    strncpy(max,  (strncmp(maxc , LLRB_RANGE_END(elm), KEY_SIZE) > 0?maxc:LLRB_RANGE_END(elm)), KEY_SIZE); \
+    if(strncmp(LLRB_RANGE_MAX(elm),  max, KEY_SIZE)<0) strncpy(LLRB_RANGE_MAX(elm), max, KEY_SIZE);
 #ifdef LLRB_AUGMENT
 #undef LLRB_AUGMENT
 #endif
@@ -30,7 +27,6 @@
     struct type *p = 0; \
     p = elm; \
     while(p){ \
-        /**strncpy(LLRB_RANGE_MAX(p), "0000", 5);**/ \
         LLRB_PARENT_MAX(p, field) \
         p = LLRB_PARENT(p, field); \
     }
@@ -43,7 +39,7 @@
             } \
         } \
         if(LLRB_RIGHT(s, field)) { \
-            if((strncmp(LLRB_RANGE_START(elm), LLRB_RANGE_MAX(LLRB_RIGHT(s, field)), KEY_SIZE) <= 0) && (strncmp(LLRB_RANGE_END(elm), LLRB_RANGE_START(LLRB_RIGHT(s, field)), 4) >= 0)) { \
+            if((strncmp(LLRB_RANGE_START(elm), LLRB_RANGE_MAX(LLRB_RIGHT(s, field)), KEY_SIZE) <= 0) && (strncmp(LLRB_RANGE_END(elm), LLRB_RANGE_START(LLRB_RIGHT(s, field)), KEY_SIZE) >= 0)) { \
                 name##_LLRB_RANGE_MATCHER(LLRB_RIGHT(s, field), elm, sll, merge); \
             } \
         } \
@@ -53,16 +49,13 @@
     } \
     int name##_LLRB_RANGE_OVERLAPS(struct name *head, struct type *elm) { \
         if(LLRB_ROOT(head) == 0) return 0; \
-        if((strncmp(LLRB_RANGE_START(elm), LLRB_RANGE_MAX(LLRB_ROOT(head)), KEY_SIZE) <= 0) && (strncmp(LLRB_RANGE_END(elm), LLRB_RANGE_START(LLRB_MIN(name, head)), 4) >= 0)) { \
+        if((strncmp(LLRB_RANGE_START(elm), LLRB_RANGE_MAX(LLRB_ROOT(head)), KEY_SIZE) <= 0) && (strncmp(LLRB_RANGE_END(elm), LLRB_RANGE_START(LLRB_MIN(name, head)), KEY_SIZE) >= 0)) { \
             return 1; \
         } \
         return 0; \
     } \
     int name##_LLRB_RANGE_GROUP_ADD(struct name *head, struct type *elm, struct sll_type *sll, merger merge) { \
-        int no = name##_LLRB_RANGE_OVERLAPS(head, elm); \
-        if(no < 1){ \
-            return 1; \
-        } \
+        if(name##_LLRB_RANGE_OVERLAPS(head, elm) == 0) return 1; \
         SLL_INIT(sll); \
         name##_LLRB_RANGE_MATCHER(LLRB_ROOT(head), elm, sll, merge); \
         if(!SLL_NEXT(SLL_FIRST(sll), next) && ((strncmp(LLRB_RANGE_START(SLL_FIRST(sll)), LLRB_RANGE_START(elm), KEY_SIZE) <= 0) && (strncmp(LLRB_RANGE_END(SLL_FIRST(sll)), LLRB_RANGE_END(elm), KEY_SIZE) >= 0))) { \

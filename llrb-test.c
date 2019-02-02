@@ -4,6 +4,7 @@
  * Author : Dries Pauwels <2mjolk@gmail.com>
  * Date   : di 11 sep 2018 07:55
  */
+#define KEY_SIZE 5
 #include <stdlib.h>
 #include "slist.h"
 #include "llrb.h"
@@ -75,13 +76,14 @@ void merge(struct node *to_merge, struct range_group *sll) {
     while(nxt) {
         c = nxt;
         nxt = SLL_NEXT(nxt, next);
-        if((strncmp(to_merge->start_key, c->end_key, 4)<= 0)&& (strncmp(to_merge->end_key, c->start_key, 4)>=0)) {
+        if((strncmp(to_merge->start_key, c->end_key, KEY_SIZE)<= 0)&&
+                (strncmp(to_merge->end_key, c->start_key, KEY_SIZE)>=0)) {
             /**overlap**/
-            if(strncmp(to_merge->start_key, c->start_key, 4)>0){
-                strncpy(to_merge->start_key, c->start_key, 5);
+            if(strncmp(to_merge->start_key, c->start_key, KEY_SIZE)>0){
+                strncpy(to_merge->start_key, c->start_key, KEY_SIZE);
             }
-            if(strncmp(to_merge->end_key, c->end_key, 4)<0) {
-                strncpy(to_merge->end_key, c->end_key, 5);
+            if(strncmp(to_merge->end_key, c->end_key, KEY_SIZE)<0) {
+                strncpy(to_merge->end_key, c->end_key, KEY_SIZE);
             }
             SLL_REMOVE_AFTER(prev, next);
             free(LLRB_DELETE(range_tree, &head, c));
@@ -89,13 +91,17 @@ void merge(struct node *to_merge, struct range_group *sll) {
             prev = c;
         }
     }
+    struct node *ln;
+    SLL_FOREACH(ln, sll, next){
+        printf("sll list start:%s end:%s", ln->start_key, ln->end_key);
+    }
 }
 
 int add_to_range(char *start, char *end) {
     struct node nn;
-    strncpy(nn.start_key, start, 5);
-    strncpy(nn.end_key, end, 5);
-    strncpy(nn.max, "0000", 5);
+    strncpy(nn.start_key, start, KEY_SIZE);
+    strncpy(nn.end_key, end, KEY_SIZE);
+    strncpy(nn.max, "0000", KEY_SIZE);
     int grown = LLRB_RANGE_GROUP_ADD(range_tree, &head, &nn, merge_list, merge);
     if(grown > 0){
         printf("range has grown\n");
@@ -129,9 +135,9 @@ int main(void)
     for (i = 0; i < sizeof(testdata) / sizeof(testdata[0]); i++) {
         if ((n = malloc(sizeof(struct node))) == NULL)
             err(1, NULL);
-        strncpy(n->start_key, testdata[i][0], 5);
-        strncpy(n->end_key, testdata[i][1], 5);
-        memset(n->max, 0, 4);
+        strncpy(n->start_key, testdata[i][0], KEY_SIZE);
+        strncpy(n->end_key, testdata[i][1], KEY_SIZE);
+        memset(n->max, 0, KEY_SIZE);
         //  printf("max %s\n", n->max);
         LLRB_INSERT(range_tree, &head, n);
     }
@@ -144,7 +150,7 @@ int main(void)
     }
     print_tree(LLRB_ROOT(&head));
     struct node d;
-    strncpy(d.start_key, "0013", 5);
+    strncpy(d.start_key, "0013", KEY_SIZE);
     struct node *deleted;
     deleted = LLRB_DELETE(range_tree, &head, &d);
     free(deleted);
@@ -153,9 +159,9 @@ int main(void)
     struct node *in;
     if ((in = malloc(sizeof(struct node))) == NULL)
         err(1, NULL);
-    strncpy(in->start_key, "0020", 5);
-    strncpy(in->end_key, "0030", 5);
-    strncpy(in->max, "0000", 5);
+    strncpy(in->start_key, "0020", KEY_SIZE);
+    strncpy(in->end_key, "0030", KEY_SIZE);
+    strncpy(in->max, "0000", KEY_SIZE);
     struct node *r = LLRB_INSERT(range_tree, &head, in);
     if(r){
         printf("insert failed for %s\n", in->start_key);
