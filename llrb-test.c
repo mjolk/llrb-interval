@@ -24,9 +24,9 @@ struct nptr {
 };
 struct node {
     LLRB_ENTRY(node) entry;
-    char start_key[5];
-    char end_key[5];
-    char max[5];
+    char start_key[KEY_SIZE];
+    char end_key[KEY_SIZE];
+    char max[KEY_SIZE];
     struct nptr next;
 
 };
