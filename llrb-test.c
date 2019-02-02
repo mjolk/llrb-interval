@@ -33,7 +33,7 @@ struct node {
 
 int intcmp(struct node *e1, struct node *e2)
 {
-    return strncmp(e1->start_key, e2->start_key, 4);//memcmp(e1->start_key, e2->start_key, 4);
+    return strncmp(e1->start_key, e2->start_key, KEY_SIZE);//memcmp(e1->start_key, e2->start_key, 4);
 }
 LLRB_HEAD(range_tree, node);
 struct range_tree head;
