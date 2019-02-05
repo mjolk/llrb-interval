@@ -108,13 +108,15 @@
 #define LLRB_PROTOTYPE_STATIC(name, type, field, cmp) \
     LLRB_PROTOTYPE_INTERNAL(name, type, field, cmp, LLRB_STATIC)
 #define LLRB_PROTOTYPE_INTERNAL(name, type, field, cmp, attr) \
+    typedef void (*name##_destructor)(struct type*); \
     attr struct type *name##_LLRB_INSERT(struct name *, struct type *); \
     attr struct type *name##_LLRB_DELETE(struct name *, struct type *); \
     attr struct type *name##_LLRB_FIND(struct name *, struct type *); \
     attr struct type *name##_LLRB_MIN(struct type *); \
     attr struct type *name##_LLRB_MAX(struct type *); \
     attr struct type *name##_LLRB_NEXT(struct type *);\
-    attr struct type *name##_LLRB_PREV(struct type *);
+    attr struct type *name##_LLRB_PREV(struct type *); \
+    attr void name##_LLRB_DESTROY(struct name *, name##_destructor destroy);
 
 #define LLRB_GENERATE(name, type, field, cmp) \
     LLRB_GENERATE_INTERNAL(name, type, field, cmp,)
@@ -311,6 +313,15 @@
             elm = LLRB_PARENT(elm, field); \
             return LLRB_PARENT(elm, field); \
         } else return 0; \
+    } \
+    attr void name##_LLRB_DESTROY(struct name *head, name##_destructor destroy) { \
+        struct type *n, *c; \
+        n = LLRB_MIN(name, head); \
+        while(n){ \
+           c = n; \
+           n = name##_LLRB_NEXT(n); \
+           destroy(name##_LLRB_DELETE(head, c)); \
+        } \
     }
 #define LLRB_INSERT(name, head, elm) name##_LLRB_INSERT((head), (elm))
 #define LLRB_DELETE(name, head, elm) name##_LLRB_DELETE((head), (elm))
@@ -320,6 +331,7 @@
 #define LLRB_MAX(name, head) name##_LLRB_MAX(LLRB_ROOT((head)))
 #define LLRB_NEXT(name, head, elm) name##_LLRB_NEXT((elm))
 #define LLRB_PREV(name, head, elm) name##_LLRB_PREV((elm))
+#define LLRB_DESTROY(name, head, destroy) name##_LLRB_DESTROY((head), (destroy))
 
 #define LLRB_FOREACH(elm, name, head) \
     for ((elm) = LLRB_MIN(name, head); (elm); (elm) = name##_LLRB_NEXT((elm)))
