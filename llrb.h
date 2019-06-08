@@ -56,13 +56,6 @@
  * ==========================================================================
  */
 
-/**
- * File   : llrb.h
- * License: MIT/X11
- * Author : Dries Pauwels <2mjolk@gmail.com>
- * Date   : di 11 sep 2018 07:54
- * enabled augmented tree
- */
 #ifndef LLRB_H
 #define LLRB_H
 

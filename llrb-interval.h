@@ -31,20 +31,20 @@
         p = LLRB_PARENT(p, field); \
     }
 #define LLRB_RANGE_GROUP_GEN(name, type, field, sll_type, sll_field) \
-    typedef void (*merger)(struct type*, struct sll_type*); \
-    void name##_LLRB_RANGE_MATCHER(struct type *s, struct type *elm, struct sll_type *sll, merger merge) { \
+    typedef void (*merger)(struct name *head, struct type*, struct sll_type*); \
+    void name##_LLRB_RANGE_MATCHER(struct name *head, struct type *s, struct type *elm, struct sll_type *sll, merger merge) { \
         if(LLRB_LEFT(s, field)){ \
             if(strcmp(LLRB_RANGE_START(elm), LLRB_RANGE_MAX(LLRB_LEFT(s, field))) <= 0) { \
-                name##_LLRB_RANGE_MATCHER(LLRB_LEFT(s, field), elm, sll, merge); \
+                name##_LLRB_RANGE_MATCHER(head, LLRB_LEFT(s, field), elm, sll, merge); \
             } \
         } \
         if(LLRB_RIGHT(s, field)) { \
             if((strcmp(LLRB_RANGE_START(elm), LLRB_RANGE_MAX(LLRB_RIGHT(s, field))) <= 0) && (strcmp(LLRB_RANGE_END(elm), LLRB_RANGE_START(LLRB_RIGHT(s, field))) >= 0)) { \
-                name##_LLRB_RANGE_MATCHER(LLRB_RIGHT(s, field), elm, sll, merge); \
+                name##_LLRB_RANGE_MATCHER(head, LLRB_RIGHT(s, field), elm, sll, merge); \
             } \
         } \
         if((strcmp(LLRB_RANGE_START(elm), LLRB_RANGE_END(s)) <= 0) && (strcmp(LLRB_RANGE_END(elm), LLRB_RANGE_START(s)) >= 0)) { \
-            merge(s, sll); \
+            merge(head, s, sll); \
         } \
     } \
     int name##_LLRB_RANGE_OVERLAPS(struct name *head, struct type *elm) { \
@@ -57,7 +57,7 @@
     int name##_LLRB_RANGE_GROUP_ADD(struct name *head, struct type *elm, struct sll_type *sll, merger merge) { \
         if(name##_LLRB_RANGE_OVERLAPS(head, elm) == 0) return 1; \
         SLL_INIT(sll); \
-        name##_LLRB_RANGE_MATCHER(LLRB_ROOT(head), elm, sll, merge); \
+        name##_LLRB_RANGE_MATCHER(head, LLRB_ROOT(head), elm, sll, merge); \
         if(!SLL_NEXT(SLL_FIRST(sll), next) && ((strcmp(LLRB_RANGE_START(SLL_FIRST(sll)), LLRB_RANGE_START(elm)) <= 0) && (strcmp(LLRB_RANGE_END(SLL_FIRST(sll)), LLRB_RANGE_END(elm)) >= 0))) { \
             return 0; \
         } \
