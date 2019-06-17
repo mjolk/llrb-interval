@@ -62,8 +62,14 @@
             return 0; \
         } \
         return 1; \
+    } \
+    void name##_LLRB_RANGE_GROUP_FIND(struct name *head, struct type *elm, struct sll_type *sll, merger merge) { \
+        if(name##_LLRB_RANGE_OVERLAPS(head, elm) == 0) return; \
+        SLL_INIT(sll); \
+        name##_LLRB_RANGE_MATCHER(head, LLRB_ROOT(head), elm, sll, merge); \
     }
 
 #define LLRB_RANGE_OVERLAPS(name, head, elm) name##_LLRB_RANGE_OVERLAPS((head), (elm))
 #define LLRB_RANGE_GROUP_ADD(name, head, elm, sll, merge) name##_LLRB_RANGE_GROUP_ADD((head), (elm), (sll), (merge))
+#define LLRB_RANGE_GROUP_FIND(name, head, elm, sll, merge) name##_LLRB_RANGE_GROUP_FIND((head), (elm), (sll), (merge))
 #endif
