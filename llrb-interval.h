@@ -8,17 +8,19 @@
 #define LLRB_INTERVAL
 #define LLRB_RANGE(name, type, field, head)
 #define LLRB_RANGE_MAX(elm) (elm)->max
+#define LLRB_RANGE_MAX_PTR(elm) &(elm)->max[0]
 #define LLRB_RANGE_END(elm) (elm)->end_key
+#define LLRB_RANGE_END_PTR(elm) &(elm)->end_key[0]
 #define LLRB_RANGE_START(elm) (elm)->start_key
+#define LLRB_RANGE_START_PTR(elm) &(elm)->start_key[0]
 #define LLRB_PARENT_MAX(elm, field) \
-    char left_max[KEY_SIZE] = ""; \
-    char right_max[KEY_SIZE] = ""; \
-    if(LLRB_LEFT(elm, field)){ strcpy(left_max, (strcmp(LLRB_RANGE_END(LLRB_LEFT(elm, field)), LLRB_RANGE_MAX(LLRB_LEFT(elm, field)))>0?LLRB_RANGE_END(LLRB_LEFT(elm, field)):LLRB_RANGE_MAX(LLRB_LEFT(elm, field))));} \
-    if(LLRB_RIGHT(elm, field)){ strcpy(right_max, (strcmp(LLRB_RANGE_END(LLRB_RIGHT(elm, field)), LLRB_RANGE_MAX(LLRB_RIGHT(elm, field)))>0?LLRB_RANGE_END(LLRB_RIGHT(elm, field)):LLRB_RANGE_MAX(LLRB_RIGHT(elm, field))));} \
-    char maxc[KEY_SIZE] = ""; \
-    char max[KEY_SIZE] = ""; \
-    strcpy(maxc, (strcmp(left_max, right_max) > 0?left_max:right_max)); \
-    strcpy(max,  (strcmp(maxc , LLRB_RANGE_END(elm)) > 0?maxc:LLRB_RANGE_END(elm))); \
+    char *left_max = ""; \
+    char *right_max = ""; \
+    if(LLRB_LEFT(elm, field)){ left_max = strcmp(LLRB_RANGE_END(LLRB_LEFT(elm, field)), LLRB_RANGE_MAX(LLRB_LEFT(elm, field)))>0?LLRB_RANGE_END_PTR(LLRB_LEFT(elm, field)):LLRB_RANGE_MAX_PTR(LLRB_LEFT(elm, field));} \
+    if(LLRB_RIGHT(elm, field)){ right_max = strcmp(LLRB_RANGE_END(LLRB_RIGHT(elm, field)), LLRB_RANGE_MAX(LLRB_RIGHT(elm, field)))>0?LLRB_RANGE_END_PTR(LLRB_RIGHT(elm, field)):LLRB_RANGE_MAX_PTR(LLRB_RIGHT(elm, field));} \
+    char *maxc, *max; \
+    maxc = strcmp(left_max, right_max) > 0?left_max:right_max; \
+    max = strcmp(maxc , LLRB_RANGE_END(elm)) > 0?maxc:LLRB_RANGE_END_PTR(elm); \
     if(strcmp(LLRB_RANGE_MAX(elm),  max)<0) strcpy(LLRB_RANGE_MAX(elm), max);
 #ifdef LLRB_AUGMENT
 #undef LLRB_AUGMENT
