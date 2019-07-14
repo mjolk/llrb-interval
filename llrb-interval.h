@@ -58,16 +58,16 @@
     } \
     int name##_LLRB_RANGE_GROUP_ADD(struct name *head, struct type *elm, struct sll_type *sll, merger merge) { \
         if(name##_LLRB_RANGE_OVERLAPS(head, elm) == 0) return 1; \
-        SLL_INIT(sll); \
+        SLIST_INIT(sll); \
         name##_LLRB_RANGE_MATCHER(head, LLRB_ROOT(head), elm, sll, merge); \
-        if(!SLL_NEXT(SLL_FIRST(sll), next) && ((strcmp(LLRB_RANGE_START(SLL_FIRST(sll)), LLRB_RANGE_START(elm)) <= 0) && (strcmp(LLRB_RANGE_END(SLL_FIRST(sll)), LLRB_RANGE_END(elm)) >= 0))) { \
+        if(!SLIST_NEXT(SLIST_FIRST(sll), next) && ((strcmp(LLRB_RANGE_START(SLIST_FIRST(sll)), LLRB_RANGE_START(elm)) <= 0) && (strcmp(LLRB_RANGE_END(SLIST_FIRST(sll)), LLRB_RANGE_END(elm)) >= 0))) { \
             return 0; \
         } \
         return 1; \
     } \
     void name##_LLRB_RANGE_GROUP_FIND(struct name *head, struct type *elm, struct sll_type *sll, merger merge) { \
         if(name##_LLRB_RANGE_OVERLAPS(head, elm) == 0) return; \
-        SLL_INIT(sll); \
+        SLIST_INIT(sll); \
         name##_LLRB_RANGE_MATCHER(head, LLRB_ROOT(head), elm, sll, merge); \
     }
 
