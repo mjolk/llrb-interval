@@ -6,7 +6,7 @@
  */
 #define KEY_SIZE 5
 #include <stdlib.h>
-#include "slist.h"
+#include <queue.h>
 #include "llrb.h"
 #include "llrb-interval.h"
 #include <err.h>
@@ -17,7 +17,7 @@
 #include <assert.h>
 
 
-SLL_HEAD(range_group, node) lhead;
+SLIST_HEAD(range_group, node) lhead;
 struct range_group *merge_list;
 struct nptr {
     struct node* sle_next;
@@ -67,15 +67,16 @@ void print_tree(struct node *n)
     }
 }
 
-void merge(struct node *to_merge, struct range_group *sll) {
+void merge(struct range_tree *t, struct node *to_merge, struct range_group *sll) {
+    (void) t;
     struct node *c, *prev, *nxt;
-    nxt = SLL_FIRST(sll);
-    SLL_INSERT_HEAD(sll, to_merge, next);
+    nxt = SLIST_FIRST(sll);
+    SLIST_INSERT_HEAD(sll, to_merge, next);
     if(nxt == 0) return;
-    prev = SLL_FIRST(sll);
+    prev = SLIST_FIRST(sll);
     while(nxt) {
         c = nxt;
-        nxt = SLL_NEXT(nxt, next);
+        nxt = SLIST_NEXT(nxt, next);
         if((strcmp(to_merge->start_key, c->end_key)<= 0)&&
                 (strcmp(to_merge->end_key, c->start_key)>=0)) {
             /**overlap**/
@@ -85,14 +86,14 @@ void merge(struct node *to_merge, struct range_group *sll) {
             if(strcmp(to_merge->end_key, c->end_key)<0) {
                 strcpy(to_merge->end_key, c->end_key);
             }
-            SLL_REMOVE_AFTER(prev, next);
+            SLIST_REMOVE_AFTER(prev, next);
             free(LLRB_DELETE(range_tree, &head, c));
         } else {
             prev = c;
         }
     }
     struct node *ln;
-    SLL_FOREACH(ln, sll, next){
+    SLIST_FOREACH(ln, sll, next){
         printf("sll list start:%s end:%s", ln->start_key, ln->end_key);
     }
 }
@@ -127,7 +128,7 @@ void delete_tree(){
 int main(void)
 {
     merge_list = &lhead;
-    SLL_INIT(merge_list);
+    SLIST_INIT(merge_list);
     size_t i;
     struct node *n;
     LLRB_INIT(&head);
@@ -172,7 +173,7 @@ int main(void)
     delete_tree();
 
     LLRB_INIT(&head);
-    SLL_INIT(merge_list);
+    SLIST_INIT(merge_list);
 
     assert(add_to_range("0012", "0046") > 0);
     assert(add_to_range("0001", "0002") > 0);
