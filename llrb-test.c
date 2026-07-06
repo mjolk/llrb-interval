@@ -20,7 +20,7 @@ struct node {
   LLRB_ENTRY(node) entry;
   char start_key[KEY_SIZE];
   char end_key[KEY_SIZE];
-  char max[KEY_SIZE];
+  struct node *max_node;
   struct nptr next;
 };
 
@@ -31,8 +31,8 @@ int intcmp(struct node *e1, struct node *e2) {
 LLRB_HEAD(range_tree, node);
 struct range_tree head;
 LLRB_PROTOTYPE(range_tree, node, entry, intcmp);
+LLRB_RANGE_GROUP_GEN(range_tree, node, entry, strcmp, range_group, next)
 LLRB_GENERATE(range_tree, node, entry, intcmp)
-LLRB_RANGE_GROUP_GEN(range_tree, node, entry, range_group, next)
 
 char(*testdata[8][2]) = {{"0020", "0040"}, {"0016", "0018"}, {"0005", "0017"},
                          {"0013", "0099"}, {"0003", "0008"}, {"0100", "0300"},
@@ -48,9 +48,9 @@ void print_tree(struct node *n) {
   left = LLRB_LEFT(n, entry);
   right = LLRB_RIGHT(n, entry);
   if (left == NULL && right == NULL)
-    printf("END [range %s, %s max: %s]", n->start_key, n->end_key, n->max);
+    printf("END [range %s, %s max: %s]", n->start_key, n->end_key, n->max_node->end_key);
   else {
-    printf("LR[range %s, %s max: %s](", n->start_key, n->end_key, n->max);
+    printf("LR[range %s, %s max: %s](", n->start_key, n->end_key, n->max_node->end_key);
     print_tree(left);
     printf(",");
     print_tree(right);
@@ -94,7 +94,6 @@ int add_to_range(char *start, char *end) {
   struct node nn;
   strcpy(nn.start_key, start);
   strcpy(nn.end_key, end);
-  strcpy(nn.max, "0000");
   int grown = LLRB_RANGE_GROUP_ADD(range_tree, &head, &nn, merge_list, merge);
   if (grown > 0) {
     printf("range has grown\n");
@@ -128,8 +127,7 @@ int main(void) {
     if ((n = malloc(sizeof(struct node))) == NULL) err(1, NULL);
     strcpy(n->start_key, testdata[i][0]);
     strcpy(n->end_key, testdata[i][1]);
-    memset(n->max, 0, KEY_SIZE);
-    //  printf("max %s\n", n->max);
+    //  printf("max %s\n", n->max_node->end_key);
     LLRB_INSERT(range_tree, &head, n);
   }
   LLRB_FOREACH(n, range_tree, &head) { printf("%s\n", n->start_key); }
@@ -147,7 +145,6 @@ int main(void) {
   if ((in = malloc(sizeof(struct node))) == NULL) err(1, NULL);
   strcpy(in->start_key, "0020");
   strcpy(in->end_key, "0030");
-  strcpy(in->max, "0000");
   struct node *r = LLRB_INSERT(range_tree, &head, in);
   if (r) {
     printf("insert failed for %s\n", in->start_key);
