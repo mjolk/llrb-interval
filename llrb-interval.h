@@ -5,6 +5,22 @@
 #define LLRB_RANGE_END(elm) (elm)->end_key
 #define LLRB_RANGE_START(elm) (elm)->start_key
 
+/* Exact range predicates, overridable by the user to change endpoint
+   semantics (e.g. exclusive ends). Only these two carry range
+   semantics; the tree-descent pruning below compares against subtree
+   max ends and must stay inclusive to remain a conservative filter. */
+#ifndef LLRB_RANGE_OVERLAP
+#define LLRB_RANGE_OVERLAP(cmp, elm, s)                    \
+  ((cmp(LLRB_RANGE_START(elm), LLRB_RANGE_END(s)) <= 0) && \
+   (cmp(LLRB_RANGE_END(elm), LLRB_RANGE_START(s)) >= 0))
+#endif
+/* does range g fully enclose elm */
+#ifndef LLRB_RANGE_ENCLOSED
+#define LLRB_RANGE_ENCLOSED(cmp, g, elm)                     \
+  ((cmp(LLRB_RANGE_START(g), LLRB_RANGE_START(elm)) <= 0) && \
+   (cmp(LLRB_RANGE_END(g), LLRB_RANGE_END(elm)) >= 0))
+#endif
+
 #define LLRB_RANGE_GROUP_GEN(name, type, field, cmp, sll_type, sll_field)      \
   static inline void type##_LLRB_AUGMENT(struct type *elm) {                   \
     struct type *p = elm;                                                      \
@@ -44,8 +60,7 @@
                                   merge);                                      \
       }                                                                        \
     }                                                                          \
-    if ((cmp(LLRB_RANGE_START(elm), LLRB_RANGE_END(s)) <= 0) &&                \
-        (cmp(LLRB_RANGE_END(elm), LLRB_RANGE_START(s)) >= 0)) {                \
+    if (LLRB_RANGE_OVERLAP(cmp, elm, s)) {                                     \
       merge(head, s, sll);                                                     \
     }                                                                          \
   }                                                                            \
@@ -65,10 +80,7 @@
     SLIST_INIT(sll);                                                           \
     name##_LLRB_RANGE_MATCHER(head, LLRB_ROOT(head), elm, sll, merge);         \
     if (!SLIST_NEXT(SLIST_FIRST(sll), next) &&                                 \
-        ((cmp(LLRB_RANGE_START(SLIST_FIRST(sll)), LLRB_RANGE_START(elm)) <=    \
-          0) &&                                                                \
-         (cmp(LLRB_RANGE_END(SLIST_FIRST(sll)), LLRB_RANGE_END(elm)) >=        \
-          0))) {                                                               \
+        LLRB_RANGE_ENCLOSED(cmp, SLIST_FIRST(sll), elm)) {                     \
       return 0;                                                                \
     }                                                                          \
     return 1;                                                                  \
