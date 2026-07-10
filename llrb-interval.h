@@ -22,7 +22,7 @@
 #endif
 
 #define LLRB_RANGE_GROUP_GEN(name, type, field, cmp, sll_type, sll_field)      \
-  static inline void type##_LLRB_AUGMENT(struct type *elm) {                   \
+  static inline __attribute__((__unused__)) void type##_LLRB_AUGMENT(struct type *elm) {                   \
     struct type *p = elm;                                                      \
     while (p) {                                                                \
       struct type *max_node = p;                                               \
@@ -42,7 +42,7 @@
   }                                                                            \
   typedef void (*merger)(struct name * head, struct type *,                    \
                          struct sll_type *);                                   \
-  static inline void name##_LLRB_RANGE_MATCHER(struct name *head, struct type *s, \
+  static inline __attribute__((__unused__)) void name##_LLRB_RANGE_MATCHER(struct name *head, struct type *s, \
                                  struct type *elm, struct sll_type *sll,       \
                                  merger merge) {                               \
     if (LLRB_LEFT(s, field)) {                                                 \
@@ -64,7 +64,7 @@
       merge(head, s, sll);                                                     \
     }                                                                          \
   }                                                                            \
-  static inline int name##_LLRB_RANGE_OVERLAPS(struct name *head, struct type *elm) { \
+  static inline __attribute__((__unused__)) int name##_LLRB_RANGE_OVERLAPS(struct name *head, struct type *elm) { \
     if (LLRB_ROOT(head) == 0) return 0;                                        \
     if ((cmp(LLRB_RANGE_START(elm),                                            \
              LLRB_RANGE_END(LLRB_RANGE_MAX(LLRB_ROOT(head)))) <= 0) &&         \
@@ -74,7 +74,7 @@
     }                                                                          \
     return 0;                                                                  \
   }                                                                            \
-  static inline int name##_LLRB_RANGE_GROUP_ADD(struct name *head, struct type *elm, \
+  static inline __attribute__((__unused__)) int name##_LLRB_RANGE_GROUP_ADD(struct name *head, struct type *elm, \
                                   struct sll_type *sll, merger merge) {        \
     if (name##_LLRB_RANGE_OVERLAPS(head, elm) == 0) return 1;                  \
     SLIST_INIT(sll);                                                           \
@@ -89,7 +89,7 @@
     }                                                                          \
     return 1;                                                                  \
   }                                                                            \
-  static inline void name##_LLRB_RANGE_GROUP_FIND(struct name *head, struct type *elm, \
+  static inline __attribute__((__unused__)) void name##_LLRB_RANGE_GROUP_FIND(struct name *head, struct type *elm, \
                                     struct sll_type *sll, merger merge) {      \
     if (name##_LLRB_RANGE_OVERLAPS(head, elm) == 0) return;                    \
     SLIST_INIT(sll);                                                           \
