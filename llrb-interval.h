@@ -79,7 +79,11 @@
     if (name##_LLRB_RANGE_OVERLAPS(head, elm) == 0) return 1;                  \
     SLIST_INIT(sll);                                                           \
     name##_LLRB_RANGE_MATCHER(head, LLRB_ROOT(head), elm, sll, merge);         \
-    if (!SLIST_NEXT(SLIST_FIRST(sll), next) &&                                 \
+    /* The matcher can come back empty when the bounding-box test       \
+       passed but no node survived the exact overlap gate (e.g.          \
+       touching spans under exclusive-end overrides).                    \
+       SLIST_FIRST must be checked before dereferencing.        */       \
+    if (SLIST_FIRST(sll) && !SLIST_NEXT(SLIST_FIRST(sll), next) &&             \
         LLRB_RANGE_ENCLOSED(cmp, SLIST_FIRST(sll), elm)) {                     \
       return 0;                                                                \
     }                                                                          \
