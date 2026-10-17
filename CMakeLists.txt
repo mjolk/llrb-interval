@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 4.3)
+cmake_minimum_required(VERSION 3.16)
 project(llrb-interval VERSION 1.0.0
     DESCRIPTION "Left leaning red black based interval tree"
     LANGUAGES C)
